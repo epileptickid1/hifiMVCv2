@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="hifiDomain/hifiDomain.csproj" />
+  <Project Path="hifi_Infrastructure/hifi_Infrastructure.csproj" Id="d1779b2f-1d53-452e-82c4-0fbc4b294633" />
+</Solution>
