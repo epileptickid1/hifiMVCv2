@@ -1,0 +1,69 @@
+﻿@model hifiDomain.Model.Order
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Order</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Orderdate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Orderdate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Totalamount)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Totalamount)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Customer)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Customer.Name)
+        </dd>
+    </dl>
+</div>
+<div>
+    <h4>Навушники в замовленні:</h4>
+    @if (Model.Headphones.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Назва</th>
+                    <th>Ціна</th>
+                    <th>Матеріал</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var headphone in Model.Headphones)
+                {
+                    <tr>
+                        <td>@headphone.Name</td>
+                        <td>@headphone.Price ₴</td>
+                        <td>@headphone.Framematerial</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Навушників немає</p>
+    }
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

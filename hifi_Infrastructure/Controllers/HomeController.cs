@@ -1,14 +1,27 @@
 using hifi_Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 namespace hifi_Infrastructure.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly DbHifiContext _context;
+
+        public HomeController(DbHifiContext context)
         {
-            return View();
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index(string? search)
+        {
+            var headphones = _context.Headphones.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+                headphones = headphones.Where(h => h.Name.Contains(search));
+
+            return View(await headphones.ToListAsync());
         }
 
         public IActionResult Privacy()

@@ -1,0 +1,76 @@
+﻿@model hifiDomain.Model.Headphone
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Headphone</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Framematerial)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Framematerial)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Weight)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Weight)
+        </dd>
+
+    </dl>
+</div>
+<div>
+    <h4>Внутрішні компоненти:</h4>
+    @if (Model.Internalpartsbrands.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Бренд</th>
+                    <th>Країна</th>
+                    <th>Опис</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var brand in Model.Internalpartsbrands)
+                {
+                    <tr>
+                        <td>@brand.Name</td>
+                        <td>@brand.Country</td>
+                        <td>@brand.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Компонентів немає</p>
+    }
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
