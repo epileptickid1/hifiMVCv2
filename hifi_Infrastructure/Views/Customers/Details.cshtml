@@ -1,36 +1,24 @@
 ﻿@model hifiDomain.Model.Customer
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Деталі покупця";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Customer</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="max-w-md space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold">@Model.Name</h1>
+        <a asp-action="Index" class="text-sm text-muted-foreground hover:text-foreground">← Назад</a>
+    </div>
+    <div class="rounded-lg border bg-card p-6">
+        <div class="grid grid-cols-2 gap-3 text-sm">
+            <span class="text-muted-foreground">Ім'я</span><span class="font-medium">@Model.Name</span>
+            <span class="text-muted-foreground">Пошта</span><span>@Model.Email</span>
+            <span class="text-muted-foreground">Телефон</span><span>@Model.Phone</span>
+        </div>
+    </div>
+    <div class="flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id"
+               class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
+            Редагувати
+        </a>
+    </div>
 </div>

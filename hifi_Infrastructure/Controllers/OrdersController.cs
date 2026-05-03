@@ -61,7 +61,10 @@ namespace hifi_Infrastructure.Controllers
         public async Task<IActionResult> Create([Bind("Orderdate,Totalamount,Customerid,Quantity,Id")] Order order)
         {
             ModelState.Remove("Customer");
-
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
             if (ModelState.IsValid)
             {
                 _context.Add(order);
@@ -149,16 +152,31 @@ namespace hifi_Infrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
-            if (order != null)
+            try
             {
-                _context.Orders.Remove(order);
+                var order = await _context.Orders
+                    .Include(o => o.Headphones)
+                    .Include(o => o.Customorderoptions)
+                    .FirstOrDefaultAsync(o => o.Id == id);
+
+                if (order != null)
+                {
+                   
+                    order.Headphones.Clear();
+                    order.Customorderoptions.Clear();
+                    await _context.SaveChangesAsync();
+
+                    _context.Orders.Remove(order);
+                    await _context.SaveChangesAsync();
+                }
+                return RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception)
+            {
+                TempData["Error"] = "Неможливо видалити замовлення.";
+                return RedirectToAction(nameof(Index));
+            }
         }
-
         private bool OrderExists(int id)
         {
             return _context.Orders.Any(e => e.Id == id);

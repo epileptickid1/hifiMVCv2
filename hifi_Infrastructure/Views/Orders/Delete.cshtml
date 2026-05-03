@@ -1,45 +1,27 @@
 ﻿@model hifiDomain.Model.Order
-
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Видалити замовлення";
 }
 
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Orderdate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Orderdate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Totalamount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Totalamount)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Customer)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Customer.Name)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
+<div class="max-w-md space-y-6">
+    <h1 class="text-2xl font-bold text-destructive">Видалити замовлення?</h1>
+    <div class="rounded-lg border border-destructive/30 bg-card p-6 text-sm">
+        <div class="grid grid-cols-2 gap-2">
+            <span class="text-muted-foreground">Дата</span><span>@Model.Orderdate</span>
+            <span class="text-muted-foreground">Сума</span><span class="font-semibold">@Model.Totalamount ₴</span>
+            <span class="text-muted-foreground">Кількість</span><span>@Model.Quantity</span>
+            <span class="text-muted-foreground">Покупець</span><span>@Model.Customer.Name</span>
+        </div>
+    </div>
+    <form asp-action="Delete" class="flex gap-3">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <button type="submit"
+                class="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-red-700 transition-colors">
+            Так, видалити
+        </button>
+        <a asp-action="Index"
+               class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
+            Скасувати
+        </a>
     </form>
 </div>

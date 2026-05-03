@@ -1,65 +1,65 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - hifi_Infrastructure</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/hifi_Infrastructure.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - ВухаІндастріс</title>
+    <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">вухаіндастріс</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area=""  asp-controller="Headphones" asp-action="Index">Headphones</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Customers" asp-action="Index">Customers</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">Orders</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Internalpartsbrands" asp-action="Index">Internalpartsbrands</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Cart" asp-action="Index"> Cart</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+<body class="min-h-screen bg-background font-sans antialiased">
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - hifi_Infrastructure - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <header class="sticky top-0 z-50 w-full border-b bg-primary backdrop-blur">
+        <div class="container mx-auto flex h-14 items-center px-4">
+            <a asp-controller="Home" asp-action="Index">
+                <img src="~/images/Вуха Індастріс.jpg"
+                     class=" h-10 w-10 object-cover rounded-md" />
+            </a>
+            <nav class="flex items-center gap-1 text-sm ">
+                
+                <a asp-controller="Headphones" asp-action="Index"
+                       class="px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
+                    Навушники
+                </a>
+                <a asp-controller="Customers" asp-action="Index"
+                       class="px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
+                    Покупці
+                </a>
+                <a asp-controller="Orders" asp-action="Index"
+                       class="px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
+                    Замовлення
+                </a>
+                <a asp-controller="Internalpartsbrands" asp-action="Index"
+                       class="px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
+                    Компоненти
+                </a>
+                <a asp-controller="Cart" asp-action="Index"
+                       class="px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors font-medium">
+                     Кошик
+                </a>
+            </nav>
         </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        @if (TempData["Error"] != null)
+        {
+            <div class="mb-4 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive text-sm">
+                @TempData["Error"]
+            </div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer class="border-t mt-auto py-4 text-center text-sm text-muted-foreground">
+        &copy; 2039 — вухаіндастріс&#64;tuta.com &nbsp;|&nbsp;
+        <a asp-controller="Home" asp-action="Privacy"
+           class="underline underline-offset-4 hover:text-primary">Privacy</a>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

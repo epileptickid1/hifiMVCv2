@@ -1,43 +1,50 @@
 ﻿@model hifiDomain.Model.Internalpartsbrand
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Додати компонент";
 }
 
-<h1>Create</h1>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="bg-red-800">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
 
-<h4>Internalpartsbrand</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+<div class="max-w-md space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold">Новий компонент</h1>
+        <a asp-action="Index" class="text-sm text-muted-foreground hover:text-foreground">← Назад</a>
+    </div>
+    <div class="rounded-lg border bg-card p-6">
+        <form asp-action="Create" class="space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-destructive text-sm"></div>
+            <div class="space-y-1">
+                <label asp-for="Name" class="text-sm font-medium"></label>
+                <input asp-for="Name" class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="Name" class="text-xs text-destructive"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+            <div class="space-y-1">
+                <label asp-for="Description" class="text-sm font-medium"></label>
+                <input asp-for="Description" class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
-            <div class="form-group">
-                <label asp-for="Country" class="control-label"></label>
-                <input asp-for="Country" class="form-control" />
-                <span asp-validation-for="Country" class="text-danger"></span>
+            <div class="space-y-1">
+                <label asp-for="Country" class="text-sm font-medium"></label>
+                <input asp-for="Country" class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+            <button type="submit"
+                    class="w-full inline-flex justify-center rounded-md bg-blue-800 px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-blue-600transition-colors">
+                Зберегти
+            </button>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
 }

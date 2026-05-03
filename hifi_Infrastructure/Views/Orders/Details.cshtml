@@ -1,69 +1,58 @@
 ﻿@model hifiDomain.Model.Order
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Деталі замовлення";
 }
 
-<h1>Details</h1>
+<div class="max-w-2xl space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold">Замовлення #@Model.Id</h1>
+        <a asp-action="Index" class="text-sm text-muted-foreground hover:text-foreground">← Назад</a>
+    </div>
 
-<div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Orderdate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Orderdate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Totalamount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Totalamount)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Customer)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Customer.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <h4>Навушники в замовленні:</h4>
-    @if (Model.Headphones.Any())
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Назва</th>
-                    <th>Ціна</th>
-                    <th>Матеріал</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var headphone in Model.Headphones)
-                {
-                    <tr>
-                        <td>@headphone.Name</td>
-                        <td>@headphone.Price ₴</td>
-                        <td>@headphone.Framematerial</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>Навушників немає</p>
-    }
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="rounded-lg border bg-card p-6">
+        <div class="grid grid-cols-2 gap-3 text-sm">
+            <span class="text-muted-foreground">Дата</span><span>@Model.Orderdate</span>
+            <span class="text-muted-foreground">Сума</span><span class="font-semibold">@Model.Totalamount ₴</span>
+            <span class="text-muted-foreground">Кількість</span><span>@Model.Quantity</span>
+            <span class="text-muted-foreground">Покупець</span><span class="font-medium">@Model.Customer.Name</span>
+        </div>
+    </div>
+
+    <div>
+        <h2 class="text-lg font-semibold mb-3">Навушники в замовленні</h2>
+        @if (Model.Headphones.Any())
+        {
+            <div class="rounded-lg border bg-card overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="border-b bg-muted/50">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-medium">Назва</th>
+                            <th class="px-4 py-3 text-left font-medium">Ціна</th>
+                            <th class="px-4 py-3 text-left font-medium">Матеріал</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        @foreach (var h in Model.Headphones)
+                        {
+                            <tr class="hover:bg-muted/30">
+                                <td class="px-4 py-3 font-medium">@h.Name</td>
+                                <td class="px-4 py-3">@h.Price ₴</td>
+                                <td class="px-4 py-3 text-muted-foreground">@h.Framematerial</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+
+            <p class="text-sm text-muted-foreground">Навушників немає</p>
+        }
+    </div>
+
+    <a asp-action="Edit" asp-route-id="@Model.Id"
+           class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
+        Редагувати
+    </a>
 </div>

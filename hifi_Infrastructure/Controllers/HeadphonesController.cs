@@ -22,7 +22,9 @@ namespace hifi_Infrastructure.Controllers
         // GET: Headphones
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Headphones.ToListAsync());
+            return View(await _context.Headphones 
+                .OrderBy(h => h.Id)
+                .ToListAsync());
         }
 
         // GET: Headphones/Details/5
@@ -43,77 +45,118 @@ namespace hifi_Infrastructure.Controllers
 
             return View(headphone);
         }
-
-        // GET: Headphones/Create
+        // GET: Headphones/Create/5
         public IActionResult Create()
         {
+            ViewData["Internalpartsbrands"] = new MultiSelectList(
+                _context.Internalpartsbrands, "Id", "Name");
             return View();
         }
 
-        // POST: Headphones/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Headphones/Create/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Price,Framematerial,Weight,Id")] Headphone headphone)
+        public async Task<IActionResult> Create(
+            [Bind("Name,Description,Price,Framematerial,Weight,Id")] Headphone headphone,
+            int[] selectedBrands)
         {
+            
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
+            
             if (ModelState.IsValid)
             {
+                
                 _context.Add(headphone);
                 await _context.SaveChangesAsync();
+
+                // Додаємо зв'язки з деталями
+                if (selectedBrands != null)
+                {
+                    var brands = await _context.Internalpartsbrands
+                        .Where(b => selectedBrands.Contains(b.Id))
+                        .ToListAsync();
+                    foreach (var brand in brands)
+                        headphone.Internalpartsbrands.Add(brand);
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["Internalpartsbrands"] = new MultiSelectList(
+                _context.Internalpartsbrands, "Id", "Name");
             return View(headphone);
         }
 
         // GET: Headphones/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var headphone = await _context.Headphones.FindAsync(id);
-            if (headphone == null)
-            {
-                return NotFound();
-            }
+            var headphone = await _context.Headphones
+                .Include(h => h.Internalpartsbrands)
+                .FirstOrDefaultAsync(h => h.Id == id);
+
+            if (headphone == null) return NotFound();
+
+            var selectedIds = headphone.Internalpartsbrands.Select(b => b.Id);
+            ViewData["Internalpartsbrands"] = new MultiSelectList(
+                _context.Internalpartsbrands, "Id", "Name", selectedIds);
+
             return View(headphone);
         }
 
         // POST: Headphones/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,Price,Framematerial,Weight,Id")] Headphone headphone)
+        public async Task<IActionResult> Edit(int id,
+            [Bind("Name,Description,Price,Framematerial,Weight,Id")] Headphone headphone,
+            int[] selectedBrands)
         {
-            if (id != headphone.Id)
-            {
-                return NotFound();
-            }
+            ModelState.Remove("Internalpartsbrands");
+            
+            if (id != headphone.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(headphone);
+                    // Завантажуємо з поточними зв'язками
+                    var existing = await _context.Headphones
+                        .Include(h => h.Internalpartsbrands)
+                        .FirstAsync(h => h.Id == id);
+
+                    // Оновлюємо поля
+                    existing.Name = headphone.Name;
+                    existing.Description = headphone.Description;
+                    existing.Price = headphone.Price;
+                    existing.Framematerial = headphone.Framematerial;
+                    existing.Weight = headphone.Weight;
+
+                    // Оновлюємо зв'язки
+                    existing.Internalpartsbrands.Clear();
+                    if (selectedBrands != null)
+                    {
+                        var brands = await _context.Internalpartsbrands
+                            .Where(b => selectedBrands.Contains(b.Id))
+                            .ToListAsync();
+                        foreach (var brand in brands)
+                            existing.Internalpartsbrands.Add(brand);
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HeadphoneExists(headphone.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!HeadphoneExists(headphone.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["Internalpartsbrands"] = new MultiSelectList(
+                _context.Internalpartsbrands, "Id", "Name", selectedBrands);
             return View(headphone);
         }
 

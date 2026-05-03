@@ -1,42 +1,59 @@
 ﻿@model IEnumerable<hifiDomain.Model.Headphone>
-
 @{
-    ViewData["Title"] = "Cart";
+    ViewData["Title"] = "Кошик";
 }
 
-<div class="container mt-4">
-    <h2> Your Cart</h2>
+<div class="max-w-2xl space-y-6">
+    <h1 class="text-2xl font-bold">Кошик</h1>
 
     @if (!Model.Any())
     {
-        <p>Your cart is empty. <a asp-controller="Home" asp-action="Index">Continue shopping</a></p>
+        <div class="rounded-lg border bg-card p-8 text-center space-y-3">
+            <p class="text-muted-foreground">Кошик порожній</p>
+            <a asp-controller="Home" asp-action="Index"
+                   class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+                Продовжити покупки
+            </a>
+        </div>
     }
     else
     {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+        <div class="rounded-lg border bg-card overflow-hidden">
+            <table class="w-full text-sm">
+                <thead class="border-b bg-muted/50">
                     <tr>
-                        <td>@item.Name</td>
-                        <td>@item.Price ₴</td>
-                        <td>
-                            <a asp-action="Remove" asp-route-id="@item.Id"
-                               class="btn btn-danger btn-sm">Remove</a>
-                        </td>
+                        <th class="px-4 py-3 text-left font-medium">Назва</th>
+                        <th class="px-4 py-3 text-left font-medium">Ціна</th>
+                        <th class="px-4 py-3"></th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="divide-y">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="hover:bg-muted/30 transition-colors">
+                            <td class="px-4 py-3 font-medium">@item.Name</td>
+                            <td class="px-4 py-3">@item.Price ₴</td>
+                            <td class="px-4 py-3 text-right">
+                                <a asp-action="Remove" asp-route-id="@item.Id"
+                                       class="text-xs px-2 py-1 rounded border border-destructive/50 text-destructive hover:bg-destructive/10 transition-colors">
+                                    Видалити
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
-        <p><strong>Total: @Model.Sum(h => h.Price ?? 0) ₴</strong></p>
-        <a asp-action="Checkout" class="btn btn-success">Place Order</a>
+        <div class="flex gap-3">
+            <a asp-controller="Home" asp-action="Index"
+                   class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
+                ← Продовжити покупки
+            </a>
+            <a asp-action="Checkout"
+                   class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+                Оформити замовлення →
+            </a>
+        </div>
     }
 </div>

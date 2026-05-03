@@ -1,55 +1,53 @@
 ﻿@model hifiDomain.Model.Order
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Нове замовлення";
 }
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="alert alert-danger">
-        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <p>@error.ErrorMessage</p>
-        }
-    </div>
-}
-<h1>Create</h1>
 
-<h4>Order</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Orderdate" class="control-label"></label>
-                <input asp-for="Orderdate" class="form-control" type="date" />
-                <span asp-validation-for="Orderdate" class="text-danger"></span>
+<div class="max-w-md space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold">Нове замовлення</h1>
+        <a asp-action="Index" class="text-sm text-muted-foreground hover:text-foreground">← Назад</a>
+    </div>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="bg-red-800">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
+    <div class="rounded-lg border bg-card p-6">
+        <form asp-action="Create" class="space-y-4">
+            <div asp-validation-summary="ModelOnly" class="text-destructive text-sm"></div>
+            <div class="space-y-1">
+                <label asp-for="Orderdate" class="text-sm font-medium"></label>
+                <input asp-for="Orderdate" type="date" class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
-            <div class="form-group">
-                <label asp-for="Totalamount" class="control-label"></label>
-                <input asp-for="Totalamount" class="form-control" />
-                <span asp-validation-for="Totalamount" class="text-danger"></span>
+            <div class="space-y-1">
+                <label asp-for="Totalamount" class="text-sm font-medium"></label>
+                <input asp-for="Totalamount" class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
-            <div class="form-group">
-                <label asp-for="Customerid" class="control-label"></label>
-                <select asp-for="Customerid" class="form-control" asp-items="ViewBag.Customerid">  </select>
+            <div class="space-y-1">
+                <label asp-for="Customerid" class="text-sm font-medium"></label>
+                <select asp-for="Customerid" asp-items="ViewBag.Customerid"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"></select>
             </div>
-            <div class="form-group">
-                <label asp-for="Quantity" class="control-label"></label>
-                <input asp-for="Quantity" class="form-control" />
-                <span asp-validation-for="Quantity" class="text-danger"></span>
+            <div class="space-y-1">
+                <label asp-for="Quantity" class="text-sm font-medium"></label>
+                <input asp-for="Quantity" class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+            <button type="submit"
+                    class="w-full inline-flex justify-center rounded-md bg-blue-800 px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-blue-600 transition-colors">
+                Створити
+            </button>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
 }

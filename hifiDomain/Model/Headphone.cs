@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+
 
 namespace hifiDomain.Model;
 
@@ -8,6 +10,7 @@ namespace hifiDomain.Model;
 public partial class Headphone : Entity
 {
     [Display(Name ="Назва ")]
+
     public string Name { get; set; } = null!;
 
     [Display(Name = "Опис ")]

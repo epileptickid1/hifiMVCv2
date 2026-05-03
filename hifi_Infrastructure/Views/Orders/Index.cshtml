@@ -1,53 +1,51 @@
 ﻿@model IEnumerable<hifiDomain.Model.Order>
-
 @{
     ViewData["Title"] = "Замовлення";
 }
 
-<h1>Замовлення</h1>
+<div class="space-y-4">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold tracking-tight">Замовлення</h1>
+        <a asp-action="Create"
+               class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors">
+            + Нове замовлення
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Orderdate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Totalamount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quantity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Customer)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Orderdate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Totalamount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="rounded-lg border bg-card overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="border-b bg-muted/50">
+                <tr>
+                    <th class="px-4 py-3 text-left font-medium">ID</th>
+                    <th class="px-4 py-3 text-left font-medium">@Html.DisplayNameFor(m => m.Orderdate)</th>
+                    <th class="px-4 py-3 text-left font-medium">@Html.DisplayNameFor(m => m.Totalamount)</th>
+                    <th class="px-4 py-3 text-left font-medium">@Html.DisplayNameFor(m => m.Quantity)</th>
+                    <th class="px-4 py-3 text-left font-medium">Покупець</th>
+                    <th class="px-4 py-3"></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y">
+                @foreach (var item in Model)
+                {
+                    <tr class="hover:bg-muted/30 transition-colors">
+                        <td class="px-4 py-3 text-muted-foreground">@item.Id</td>
+                        <td class="px-4 py-3">@item.Orderdate</td>
+                        <td class="px-4 py-3 font-semibold">@item.Totalamount ₴</td>
+                        <td class="px-4 py-3">@item.Quantity</td>
+                        <td class="px-4 py-3">@item.Customer.Name</td>
+                        <td class="px-4 py-3">
+                            <div class="flex gap-2 justify-end">
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="text-xs px-2 py-1 rounded border hover:bg-accent transition-colors">Ред.</a>
+                                <a asp-action="Details" asp-route-id="@item.Id"
+                                   class="text-xs px-2 py-1 rounded border hover:bg-accent transition-colors">Деталі</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id"
+                                   class="text-xs px-2 py-1 rounded border border-destructive/50 text-destructive hover:bg-destructive/10 transition-colors">Видалити</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

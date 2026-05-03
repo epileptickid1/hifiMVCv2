@@ -19,7 +19,7 @@ namespace hifi_Infrastructure.Controllers
             var headphones = _context.Headphones.AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
-                headphones = headphones.Where(h => h.Name.Contains(search));
+                headphones = headphones.Where(h => h.Name.ToLower().Contains(search.ToLower()));
 
             return View(await headphones.ToListAsync());
         }

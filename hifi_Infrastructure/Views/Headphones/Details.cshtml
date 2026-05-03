@@ -1,76 +1,64 @@
 ﻿@model hifiDomain.Model.Headphone
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Деталі навушника";
 }
 
-<h1>Details</h1>
+<div class="max-w-2xl space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold">@Model.Name</h1>
+        <a asp-action="Index"
+           class="text-sm text-muted-foreground hover:text-foreground transition-colors">← Назад</a>
+    </div>
 
-<div>
-    <h4>Headphone</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Framematerial)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Framematerial)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Weight)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Weight)
-        </dd>
+    <div class="rounded-lg border bg-card p-6 space-y-3">
+        <div class="grid grid-cols-2 gap-2 text-sm">
+            <span class="text-muted-foreground">Опис</span>
+            <span>@Model.Description</span>
+            <span class="text-muted-foreground">Ціна</span>
+            <span class="font-semibold">@Model.Price ₴</span>
+            <span class="text-muted-foreground">Матеріал</span>
+            <span>@Model.Framematerial</span>
+            <span class="text-muted-foreground">Вага</span>
+            <span>@Model.Weight г</span>
+        </div>
+    </div>
 
-    </dl>
-</div>
-<div>
-    <h4>Внутрішні компоненти:</h4>
-    @if (Model.Internalpartsbrands.Any())
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Бренд</th>
-                    <th>Країна</th>
-                    <th>Опис</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var brand in Model.Internalpartsbrands)
-                {
-                    <tr>
-                        <td>@brand.Name</td>
-                        <td>@brand.Country</td>
-                        <td>@brand.Description</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>Компонентів немає</p>
-    }
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div>
+        <h2 class="text-lg font-semibold mb-3">Внутрішні компоненти</h2>
+        @if (Model.Internalpartsbrands.Any())
+        {
+            <div class="rounded-lg border bg-card overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="border-b bg-muted/50">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-medium">Бренд</th>
+                            <th class="px-4 py-3 text-left font-medium">Країна</th>
+                            <th class="px-4 py-3 text-left font-medium">Опис</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        @foreach (var brand in Model.Internalpartsbrands)
+                        {
+                            <tr class="hover:bg-muted/30">
+                                <td class="px-4 py-3 font-medium">@brand.Name</td>
+                                <td class="px-4 py-3">@brand.Country</td>
+                                <td class="px-4 py-3 text-muted-foreground">@brand.Description</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-sm text-muted-foreground">Компонентів немає</p>
+        }
+    </div>
+
+    <div class="flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id"
+               class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
+            Редагувати
+        </a>
+    </div>
 </div>

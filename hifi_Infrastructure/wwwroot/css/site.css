@@ -1,4 +1,13 @@
- html {
+/*:root {
+    --bg: #fffafa;
+    --card: #808080;
+    --accent: #c8ff00;
+    --text: #708090;
+    --muted: #888;
+    --border: rgba(255,255,255,0.08);
+}
+
+html {
   font-size: 14px;
 }
 
@@ -18,7 +27,10 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", sans-serif;
+    margin-bottom: 60px;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -28,4 +40,4 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
-}
+}*/
