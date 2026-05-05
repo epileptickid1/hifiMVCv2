@@ -1,32 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using hifi_Infrastructure;
+using hifi_Infrastructure.Models;
+using hifiDomain.Model;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using hifiDomain.Model;
-using hifi_Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace hifi_Infrastructure.Controllers
 {
     public class OrdersController : Controller
     {
         private readonly DbHifiContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public OrdersController(DbHifiContext context)
+        public OrdersController(DbHifiContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Orders
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            var dbHifiContext = _context.Orders.Include(o => o.Customer);
-            return View(await dbHifiContext.ToListAsync());
+            var orders = await _context.Orders
+            .OrderByDescending(o => o.Id)
+            .ToListAsync();
+
+            var userIds = orders.Select(o => o.UserId).Distinct().ToList();
+            var users = await _userManager.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToListAsync();
+
+            ViewBag.Users = users.ToDictionary(u => u.Id, u => u.Name);
+            return View(orders);
+        }
+
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> MyOrders()
+        {
+            var userId = _userManager.GetUserId(User);
+            var orders = await _context.Orders
+                .Include(o => o.Headphones)
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.Id)
+                .ToListAsync();
+            return View(orders);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(int id, string status)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order != null)
+            {
+                order.Status = status;
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
         }
 
         // GET: Orders/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,7 +76,6 @@ namespace hifi_Infrastructure.Controllers
             }
 
             var order = await _context.Orders
-                .Include(o => o.Customer)
                 .Include(o => o.Headphones)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
@@ -47,18 +87,19 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // GET: Orders/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            ViewData["Customerid"] = new SelectList(_context.Customers, "Id", "Name");
             return View();
         }
 
         // POST: Orders/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Orderdate,Totalamount,Customerid,Quantity,Id")] Order order)
+        public async Task<IActionResult> Create([Bind("Orderdate,Totalamount,Quantity,Status,UserId,Id")] Order order)
         {
             ModelState.Remove("Customer");
             foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
@@ -71,11 +112,12 @@ namespace hifi_Infrastructure.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Customerid"] = new SelectList(_context.Customers, "Id", "Name", order.Customerid);
+            
             return View(order);
         }
 
         // GET: Orders/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -88,21 +130,23 @@ namespace hifi_Infrastructure.Controllers
             {
                 return NotFound();
             }
-            ViewData["Customerid"] = new SelectList(_context.Customers, "Id", "Name", order.Customerid);
             return View(order);
         }
 
         // POST: Orders/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Orderdate,Totalamount,Customerid,Quantity,Id")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("Orderdate,Totalamount,Quantity,Status,UserId,Id")] Order order)
         {
             if (id != order.Id)
             {
                 return NotFound();
             }
+
+            ModelState.Remove("Headphones");
 
             if (ModelState.IsValid)
             {
@@ -124,11 +168,12 @@ namespace hifi_Infrastructure.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Customerid"] = new SelectList(_context.Customers, "Id", "Name", order.Customerid);
+            
             return View(order);
         }
 
         // GET: Orders/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -137,7 +182,6 @@ namespace hifi_Infrastructure.Controllers
             }
 
             var order = await _context.Orders
-                .Include(o => o.Customer)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
@@ -148,6 +192,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // POST: Orders/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -182,5 +227,6 @@ namespace hifi_Infrastructure.Controllers
             return _context.Orders.Any(e => e.Id == id);
         }
         
+
     }
 }

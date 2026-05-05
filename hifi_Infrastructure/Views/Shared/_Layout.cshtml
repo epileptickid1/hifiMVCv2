@@ -7,51 +7,104 @@
     <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="min-h-screen bg-background font-sans antialiased">
+<body class="min-h-screen bg-gray-900 font-sans antialiased">
 
-    <header class="sticky top-0 z-50 w-full border-b bg-primary backdrop-blur">
-        <div class="container mx-auto flex h-14 items-center px-4">
-            <a asp-controller="Home" asp-action="Index">
-                <img src="~/images/Вуха Індастріс.jpg"
-                     class=" h-10 w-10 object-cover rounded-md" />
-            </a>
-            <nav class="flex items-center gap-1 text-sm ">
-                
-                <a asp-controller="Headphones" asp-action="Index"
-                       class="px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
-                    Навушники
+    <header class="sticky top-0 z-50 w-full border-b border-primary bg-primary backdrop-blur">
+        <div class="container mx-auto flex h-14 items-center justify-between px-4">
+
+            <div class="flex items-center gap-3">
+                <a asp-controller="Home" asp-action="Index">
+                    <img src="~/images/Вуха Індастріс.jpg"
+                         class="h-10 w-10 rounded-md object-cover" />
                 </a>
-                <a asp-controller="Customers" asp-action="Index"
-                       class="px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
-                    Покупці
-                </a>
-                <a asp-controller="Orders" asp-action="Index"
-                       class="px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
-                    Замовлення
-                </a>
-                <a asp-controller="Internalpartsbrands" asp-action="Index"
-                       class="px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
-                    Компоненти
-                </a>
+                <h1 class="text-3xl font-bold tracking-tight">
+                    Вуха<span class="text-secondary">Індастріс</span>
+                </h1>
+                <nav class="ml-2 flex items-center gap-1 text-sm">
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Headphones" asp-action="Index"
+                               class="rounded-md px-3 py-2 transition-colors hover:text-accent-foreground hover:bg-accent">
+                            Навушники
+                        </a>
+                        <a asp-controller="Internalpartsbrands" asp-action="Index"
+                               class="rounded-md px-3 py-2 transition-colors hover:text-accent-foreground hover:bg-accent">
+                            Компоненти
+                        </a>
+                        <a asp-controller="Orders" asp-action="Index"
+                               class="rounded-md px-3 py-2 transition-colors hover:text-accent-foreground hover:bg-accent">
+                            Замовлення
+                        </a>
+                    }
+
+                    @if (User.IsInRole("Customer"))
+                    {
+                        <a asp-controller="Orders" asp-action="MyOrders"
+                               class="rounded-md px-3 py-2 transition-colors hover:text-accent-foreground hover:bg-accent">
+                            Мої замовлення
+                        </a>
+                    }
+
+                    
+                </nav>
+            </div>
+
+            <div class="flex items-center gap-2 text-sm">
                 <a asp-controller="Cart" asp-action="Index"
-                       class="px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors font-medium">
-                     Кошик
+                       class="rounded-md px-3 py-2 font-medium transition-colors hover:text-accent-foreground hover:bg-accent">
+                    🛒
                 </a>
-            </nav>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="text-muted-foreground hidden sm:block">
+                        @User.Identity.Name
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <span class="ml-1 rounded bg-slate-800 px-1.5 py-1 text-xs text-amber-600">Admin</span>
+                        }
+                    </span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit"
+                                class="inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent">
+                            Вийти
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login"
+                           class="inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent">
+                        Увійти
+                    </a>
+                    <a asp-controller="Account" asp-action="Register"
+                           class="inline-flex items-center justify-center rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-slate-700">
+                        Реєстрація
+                    </a>
+                }
+            </div>
+
         </div>
     </header>
 
     <main class="container mx-auto px-4 py-8">
         @if (TempData["Error"] != null)
         {
-            <div class="mb-4 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive text-sm">
+            <div class="border-destructive/50 bg-destructive/10 text-destructive mb-4 rounded-lg border px-4 py-3 text-sm">
                 @TempData["Error"]
+            </div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+                @TempData["Success"]
             </div>
         }
         @RenderBody()
     </main>
 
-    <footer class="border-t mt-auto py-4 text-center text-sm text-muted-foreground">
+    <footer class="text-muted-foreground mt-auto border-t border-slate-900 bg-neutral py-4 text-center text-sm">
         &copy; 2039 — вухаіндастріс&#64;tuta.com &nbsp;|&nbsp;
         <a asp-controller="Home" asp-action="Privacy"
            class="underline underline-offset-4 hover:text-primary">Privacy</a>

@@ -1,0 +1,52 @@
+@model hifi_Infrastructure.ViewModel.LoginViewModel
+@{
+    ViewData["Title"] = "Вхід";
+}
+
+<div class="max-w-sm mx-auto space-y-6 mt-8">
+    <div>
+        <h1 class="text-2xl font-bold">Вхід</h1>
+        <p class="text-sm text-muted-foreground mt-1">Введіть email та пароль для входу</p>
+    </div>
+
+    <div class="rounded-lg border bg-card p-6">
+        <form asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="space-y-4">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-destructive text-sm rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2"></div>
+
+            <div class="space-y-1">
+                <label asp-for="Email" class="text-sm font-medium"></label>
+                <input asp-for="Email" type="email" placeholder="your@email.com"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="Email" class="text-xs text-destructive"></span>
+            </div>
+
+            <div class="space-y-1">
+                <label asp-for="Password" class="text-sm font-medium"></label>
+                <input asp-for="Password" type="password" placeholder="••••••••••••••••"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="Password" class="text-xs text-destructive"></span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <input asp-for="RememberMe" type="checkbox"
+                       class="h-4 w-4 rounded border-input" />
+                <label asp-for="RememberMe" class="text-sm"></label>
+            </div>
+
+            <button type="submit"
+                    class="w-full inline-flex justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 transition-colors">
+                Увійти
+            </button>
+        </form>
+    </div>
+
+    <p class="text-center text-sm text-muted-foreground">
+        Немає акаунту?
+        <a asp-action="Register" class="underline underline-offset-4 hover:text-foreground">Зареєструватися</a>
+    </p>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

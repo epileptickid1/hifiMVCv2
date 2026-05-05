@@ -5,7 +5,7 @@
 
 @if (!ViewData.ModelState.IsValid)
 {
-    <div class="bg-red-800">
+    <div class="bg-destructive">
         @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
         {
             <p>@error.ErrorMessage</p>

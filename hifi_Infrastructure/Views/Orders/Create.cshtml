@@ -1,6 +1,16 @@
-﻿@model hifiDomain.Model.Order
+@model hifiDomain.Model.Order
 @{
     ViewData["Title"] = "Нове замовлення";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="bg-destructive">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
 }
 
 <div class="max-w-md space-y-6">
@@ -8,37 +18,44 @@
         <h1 class="text-2xl font-bold">Нове замовлення</h1>
         <a asp-action="Index" class="text-sm text-muted-foreground hover:text-foreground">← Назад</a>
     </div>
-    @if (!ViewData.ModelState.IsValid)
-    {
-        <div class="bg-red-800">
-            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-            {
-                <p>@error.ErrorMessage</p>
-            }
-        </div>
-    }
     <div class="rounded-lg border bg-card p-6">
-        <form asp-action="Create" class="space-y-4">
+        <form asp-action="Create" method="post" class="space-y-4">
+            @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-destructive text-sm"></div>
+
             <div class="space-y-1">
                 <label asp-for="Orderdate" class="text-sm font-medium"></label>
-                <input asp-for="Orderdate" type="date" class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <input asp-for="Orderdate" type="date"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
             <div class="space-y-1">
                 <label asp-for="Totalamount" class="text-sm font-medium"></label>
-                <input asp-for="Totalamount" class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
-            </div>
-            <div class="space-y-1">
-                <label asp-for="Customerid" class="text-sm font-medium"></label>
-                <select asp-for="Customerid" asp-items="ViewBag.Customerid"
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"></select>
+                <input asp-for="Totalamount"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
             <div class="space-y-1">
                 <label asp-for="Quantity" class="text-sm font-medium"></label>
-                <input asp-for="Quantity" class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <input asp-for="Quantity"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
             </div>
+            <div class="space-y-1">
+                <label asp-for="Status" class="text-sm font-medium"></label>
+                <select asp-for="Status"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring">
+                    <option value="Обробляється">Обробляється</option>
+                    <option value="Відправлено">Відправлено</option>
+                    <option value="Виконано">Виконано</option>
+                    <option value="Скасовано">Скасовано</option>
+                </select>
+            </div>
+            <div class="space-y-1">
+                <label asp-for="UserId" class="text-sm font-medium">ID користувача</label>
+                <input asp-for="UserId" placeholder="Вставте ID користувача з системи"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+            </div>
+
             <button type="submit"
-                    class="w-full inline-flex justify-center rounded-md bg-blue-800 px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-blue-600 transition-colors">
+                    class="w-full inline-flex justify-center rounded-md bg-blue-800 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors">
                 Створити
             </button>
         </form>
@@ -46,8 +63,5 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

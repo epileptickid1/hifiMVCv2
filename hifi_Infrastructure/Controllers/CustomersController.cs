@@ -1,46 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿/*using hifi_Infrastructure.Models;
+using hifi_Infrastructure.ViewModel;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using hifiDomain.Model;
-using hifi_Infrastructure;
 
 namespace hifi_Infrastructure.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CustomersController : Controller
     {
-        private readonly DbHifiContext _context;
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public CustomersController(DbHifiContext context)
+        public CustomersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            var users = await _userManager.Users.OrderByDescending(u => u.Name).ToListAsync();
+
+            // Для кожного юзера отримуємо його ролі
+            var usersWithRoles = new List<(User user, IList<string> roles)>();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                usersWithRoles.Add((user, roles));
+            }
+
+            return View(usersWithRoles);
         }
 
-        // GET: Customers/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Customers/Details/6
+        public async Task<IActionResult> Details(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
 
-            return View(customer);
+            var roles = await _userManager.GetRolesAsync(user);
+            ViewBag.Roles = roles;
+            return View(user);
         }
 
         // GET: Customers/Create
@@ -50,116 +55,136 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // POST: Customers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Email,Phone,Id")] Customer customer)
+        public async Task<IActionResult> Create(CreateUserViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var user = new User
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Name = model.Name
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, model.Role);
+                    TempData["Success"] = $"Користувача {model.Email} створено успішно.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
             }
-            return View(customer);
+            return View(model);
         }
 
-        // GET: Customers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Customers/Edit/6
+        public async Task<IActionResult> Edit(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var currentRole = userRoles.FirstOrDefault() ?? "Customer";
+
+            var model = new EditUserViewModel
             {
-                return NotFound();
-            }
-            return View(customer);
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Role = currentRole
+            };
+            return View(model);
         }
 
-        // POST: Customers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Customers/Edit/6
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Email,Phone,Id")] Customer customer)
+        public async Task<IActionResult> Edit(EditUserViewModel model)
         {
-            if (id != customer.Id)
+            if (!ModelState.IsValid) return View(model);
+
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null) return NotFound();
+
+            user.Name = model.Name;
+            user.Email = model.Email;
+            user.UserName = model.Email;
+
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
             {
-                return NotFound();
+                foreach (var error in updateResult.Errors)
+                    ModelState.AddModelError(string.Empty, error.Description);
+                return View(model);
             }
 
-            if (ModelState.IsValid)
+            // Оновлюємо роль
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            await _userManager.AddToRoleAsync(user, model.Role);
+
+            // Якщо змінили пароль
+            if (!string.IsNullOrEmpty(model.NewPassword))
             {
-                try
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var passResult = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+                if (!passResult.Succeeded)
                 {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
+                    foreach (var error in passResult.Errors)
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    return View(model);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CustomerExists(customer.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            return View(customer);
+
+            TempData["Success"] = "Дані користувача оновлено.";
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Customers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Customers/Delete/6
+        public async Task<IActionResult> Delete(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
 
-            return View(customer);
+            var roles = await _userManager.GetRolesAsync(user);
+            ViewBag.Roles = roles;
+            return View(user);
         }
 
-        // POST: Customers/Delete/5
+        // POST: Customers/Delete/6
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            try
-            {
-                var customer = await _context.Customers.FindAsync(id);
-                if (customer != null)
-                {
-                    _context.Customers.Remove(customer);
-                }
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
 
-                await _context.SaveChangesAsync();
+            // Не дозволяємо видалити самого себе
+            var currentUserId = _userManager.GetUserId(User);
+            if (user.Id == currentUserId)
+            {
+                TempData["Error"] = "Не можна видалити власний акаунт.";
                 return RedirectToAction(nameof(Index));
             }
-            catch (Exception)
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
             {
-                TempData["Error"] = "Неможливо видалити покупця існує замовлення пов'язане з ними.";
+                TempData["Error"] = "Помилка при видаленні користувача.";
                 return RedirectToAction(nameof(Index));
             }
-        }
 
-        private bool CustomerExists(int id)
-        {
-            return _context.Customers.Any(e => e.Id == id);
+            TempData["Success"] = "Користувача видалено.";
+            return RedirectToAction(nameof(Index));
         }
     }
-}
+}*/

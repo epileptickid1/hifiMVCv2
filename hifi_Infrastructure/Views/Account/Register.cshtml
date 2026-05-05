@@ -1,0 +1,60 @@
+@model hifi_Infrastructure.ViewModel.RegisterViewModel
+@{
+    ViewData["Title"] = "Реєстрація";
+}
+
+<div class="max-w-sm mx-auto space-y-6 mt-8">
+    <div>
+        <h1 class="text-2xl font-bold">Реєстрація</h1>
+        <p class="text-sm text-muted-foreground mt-1">Створіть акаунт покупця</p>
+    </div>
+
+    <div class="rounded-lg border bg-card p-6">
+        <form asp-action="Register" method="post" class="space-y-4">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-destructive text-sm rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2"></div>
+
+            <div class="space-y-1">
+                <label asp-for="Name" class="text-sm font-medium"></label>
+                <input asp-for="Name" placeholder="Іван Іваненко"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="Name" class="text-xs text-destructive"></span>
+            </div>
+
+            <div class="space-y-1">
+                <label asp-for="Email" class="text-sm font-medium"></label>
+                <input asp-for="Email" type="email" placeholder="your@email.com"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="Email" class="text-xs text-destructive"></span>
+            </div>
+
+            <div class="space-y-1">
+                <label asp-for="Password" class="text-sm font-medium"></label>
+                <input asp-for="Password" type="password" placeholder="Мін. 6 символів"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="Password" class="text-xs text-destructive"></span>
+            </div>
+
+            <div class="space-y-1">
+                <label asp-for="PasswordConfirm" class="text-sm font-medium"></label>
+                <input asp-for="PasswordConfirm" type="password" placeholder="Повторіть пароль"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="PasswordConfirm" class="text-xs text-destructive"></span>
+            </div>
+
+            <button type="submit"
+                    class="w-full inline-flex justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 transition-colors">
+                Зареєструватися
+            </button>
+        </form>
+    </div>
+
+    <p class="text-center text-sm text-muted-foreground">
+        Вже є акаунт?
+        <a asp-action="Login" class="underline underline-offset-4 hover:text-foreground">Увійти</a>
+    </p>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

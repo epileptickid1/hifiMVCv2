@@ -1,0 +1,77 @@
+@model IEnumerable<hifiDomain.Model.Order>
+@{
+    ViewData["Title"] = "Мої замовлення";
+}
+
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold tracking-tight">Мої замовлення</h1>
+        <a asp-controller="Home" asp-action="Index"
+           class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
+            ← До магазину
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="rounded-lg border bg-card p-10 text-center space-y-3">
+            <p class="text-muted-foreground">У вас ще немає замовлень</p>
+            <a asp-controller="Home" asp-action="Index"
+               class="inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 transition-colors">
+                Перейти до навушників
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="space-y-4">
+            @foreach (var order in Model)
+            {
+                <div class="rounded-lg border bg-card overflow-hidden">
+                    <div class="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
+                        <div class="flex items-center gap-4 text-sm">
+                            <span class="font-semibold">Замовлення #@order.Id</span>
+                            <span class="text-muted-foreground">@order.Orderdate</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            @{
+                                var statusClass = order.Status switch
+                                {
+                                    "Виконано" => "bg-green-100 text-green-800 border-green-200",
+                                    "Скасовано" => "bg-red-100 text-red-800 border-red-200",
+                                    "Доставляється" => "bg-violet-100 text-violet-800 border-violet-200",
+                                    _ => "bg-yellow-100 text-yellow-800 border-yellow-200"
+                                };
+                            }
+                            <span class="text-xs px-2 py-1 rounded-full border font-medium @statusClass">
+                                @order.Status
+                            </span>
+                            <span class="font-bold text-sm">@order.Totalamount ₴</span>
+                        </div>
+                    </div>
+
+                    @if (order.Headphones.Any())
+                    {
+                        <div class="px-4 py-3">
+                            <p class="text-xs text-muted-foreground mb-2">Товари:</p>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach (var h in order.Headphones)
+                                {
+                                    <span class="text-xs px-2 py-1 rounded-md border bg-muted/50">@h.Name</span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="px-4 py-2 border-t flex justify-between items-center text-sm text-muted-foreground">
+                        <span>Кількість: @order.Quantity шт.</span>
+                        <a asp-action="Details" asp-route-id="@order.Id"
+                           class="text-xs px-2 py-1 rounded border hover:bg-accent transition-colors">
+                            Деталі
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

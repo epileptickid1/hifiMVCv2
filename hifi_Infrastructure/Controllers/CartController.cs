@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using hifi_Infrastructure.Models;
 using hifiDomain.Model;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -8,11 +11,13 @@ namespace hifi_Infrastructure.Controllers
     public class CartController : Controller
     {
         private readonly DbHifiContext _context;
+        private readonly UserManager<User> _userManager;
         private const string CartKey = "Cart";
 
-        public CartController(DbHifiContext context)
+        public CartController(DbHifiContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
 
@@ -69,24 +74,26 @@ namespace hifi_Infrastructure.Controllers
             ViewBag.Quantities = cart;
             return View(headphones);
         }
-
+        //[HttpPost]
+        [Authorize]
         public IActionResult Checkout()
         {
             var cart = GetCart();
             if (!cart.Any())
                 return RedirectToAction("Index");
 
-            ViewData["Customerid"] = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
-                _context.Customers, "Id", "Name");
+            
             return View();
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Checkout(int Customerid)
+        public async Task<IActionResult> Checkout(string placeholder)
         {
             var cart = GetCart();
-
+            var userId = _userManager.GetUserId(User);
             var headphones = await _context.Headphones
+
                 .Where(h => cart.Keys.Contains(h.Id))
                 .ToListAsync();
 
@@ -97,9 +104,10 @@ namespace hifi_Infrastructure.Controllers
             var order = new Order
             {
                 Orderdate = DateOnly.FromDateTime(DateTime.Now),
-                Customerid = Customerid,
+                UserId = userId,
                 Totalamount = totalAmount,
-                Quantity = totalQuantity
+                Quantity = totalQuantity,
+                Status = "Обробляється"
             };
 
             _context.Orders.Add(order);
@@ -117,7 +125,7 @@ namespace hifi_Infrastructure.Controllers
             await _context.SaveChangesAsync();
             SaveCart(new Dictionary<int, int>());
 
-            return RedirectToAction("Index", "Orders");
+            return RedirectToAction("MyOrders", "Orders");
         }
     }
 }

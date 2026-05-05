@@ -1,42 +1,71 @@
-﻿@model IEnumerable<hifiDomain.Model.Order>
+@model IEnumerable<hifiDomain.Model.Order>
 @{
-    ViewData["Title"] = "Замовлення";
+    ViewData["Title"] = "Всі замовлення";
+    var users = ViewBag.Users as Dictionary<string, string> ?? new Dictionary<string, string>();
 }
 
 <div class="space-y-4">
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold tracking-tight">Замовлення</h1>
-        <a asp-action="Create"
-               class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors">
-            + Нове замовлення
-        </a>
+        <h1 class="text-2xl font-bold tracking-tight">Всі замовлення</h1>
     </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive text-sm">
+            @TempData["Error"]
+        </div>
+    }
 
     <div class="rounded-lg border bg-card overflow-hidden">
         <table class="w-full text-sm">
             <thead class="border-b bg-muted/50">
                 <tr>
                     <th class="px-4 py-3 text-left font-medium">ID</th>
-                    <th class="px-4 py-3 text-left font-medium">@Html.DisplayNameFor(m => m.Orderdate)</th>
-                    <th class="px-4 py-3 text-left font-medium">@Html.DisplayNameFor(m => m.Totalamount)</th>
-                    <th class="px-4 py-3 text-left font-medium">@Html.DisplayNameFor(m => m.Quantity)</th>
+                    <th class="px-4 py-3 text-left font-medium">Дата</th>
                     <th class="px-4 py-3 text-left font-medium">Покупець</th>
+                    <th class="px-4 py-3 text-left font-medium">Кількість</th>
+                    <th class="px-4 py-3 text-left font-medium">Сума</th>
+                    <th class="px-4 py-3 text-left font-medium">Статус</th>
                     <th class="px-4 py-3"></th>
                 </tr>
             </thead>
             <tbody class="divide-y">
                 @foreach (var item in Model)
                 {
+                    var userName = users.ContainsKey(item.UserId) ? users[item.UserId] : item.UserId;
+                    var statusClass = item.Status switch
+                    {
+                        "Виконано" => "bg-green-100 text-green-800 border-green-200",
+                        "Скасовано" => "bg-red-100 text-red-800 border-red-200",
+                        "Доставляється" => "bg-violet-100 text-violet-800 border-violet-200",
+                        _ => "bg-yellow-100 text-yellow-800 border-yellow-200"
+                    };
+
                     <tr class="hover:bg-muted/30 transition-colors">
                         <td class="px-4 py-3 text-muted-foreground">@item.Id</td>
                         <td class="px-4 py-3">@item.Orderdate</td>
-                        <td class="px-4 py-3 font-semibold">@item.Totalamount ₴</td>
+                        <td class="px-4 py-3 font-medium">@userName</td>
                         <td class="px-4 py-3">@item.Quantity</td>
-                        <td class="px-4 py-3">@item.Customer.Name</td>
+                        <td class="px-4 py-3 font-semibold">@item.Totalamount ₴</td>
+                        <td class="px-4 py-3">
+                            <form asp-action="UpdateStatus" method="post" class="flex items-center gap-1">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <select name="status"
+                                        class="text-xs rounded border border-input px-2 py-1 focus:outline-none focus:ring-1 focus:ring-ring bg-neutral">
+                                    <option value="Обробляється" selected="@(item.Status == "Обробляється")">Обробляється</option>
+                                    <option value="Відправлено" selected="@(item.Status == "Відправлено")">Відправлено</option>
+                                    <option value="Виконано" selected="@(item.Status == "Виконано")">Виконано</option>
+                                    <option value="Скасовано" selected="@(item.Status == "Скасовано")">Скасовано</option>
+                                </select>
+                                <button type="submit"
+                                        class="text-xs px-2 py-1 rounded border hover:bg-accent transition-colors">
+                                    submit
+                                </button>
+                            </form>
+                        </td>
                         <td class="px-4 py-3">
                             <div class="flex gap-2 justify-end">
-                                <a asp-action="Edit" asp-route-id="@item.Id"
-                                   class="text-xs px-2 py-1 rounded border hover:bg-accent transition-colors">Ред.</a>
                                 <a asp-action="Details" asp-route-id="@item.Id"
                                    class="text-xs px-2 py-1 rounded border hover:bg-accent transition-colors">Деталі</a>
                                 <a asp-action="Delete" asp-route-id="@item.Id"

@@ -1,30 +1,52 @@
 ﻿@model hifiDomain.Model.Order
 @{
     ViewData["Title"] = "Деталі замовлення";
+    var statusClass = Model.Status switch
+    {
+        "Доставляється" => "bg-indigo-100 text-indigo-800 border-indigo-200",
+        "Виконано" => "bg-green-100 text-green-800 border-green-200",
+        "Скасовано" => "bg-red-100 text-red-800 border-red-200",
+        _ => "bg-yellow-100 text-yellow-800 border-yellow-200"
+    };
 }
 
 <div class="max-w-2xl space-y-6">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-bold">Замовлення #@Model.Id</h1>
-        <a asp-action="Index" class="text-sm text-muted-foreground hover:text-foreground">← Назад</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Index" class="text-muted-foreground rounded-md border px-4 py-2 text-sm hover:text-foreground hover:bg-accent">← Всі замовлення</a>
+        }
+        else
+        {
+            <a asp-action="MyOrders" class="text-muted-foreground rounded-md border px-4 py-2 text-sm hover:text-foreground hover:bg-accent">← Мої замовлення</a>
+        }
     </div>
 
-    <div class="rounded-lg border bg-card p-6">
+    <div class="bg-card rounded-lg border p-6">
         <div class="grid grid-cols-2 gap-3 text-sm">
-            <span class="text-muted-foreground">Дата</span><span>@Model.Orderdate</span>
-            <span class="text-muted-foreground">Сума</span><span class="font-semibold">@Model.Totalamount ₴</span>
-            <span class="text-muted-foreground">Кількість</span><span>@Model.Quantity</span>
-            <span class="text-muted-foreground">Покупець</span><span class="font-medium">@Model.Customer.Name</span>
+            <span class="text-muted-foreground">Дата</span>
+            <span>@Model.Orderdate</span>
+            <span class="text-muted-foreground">Сума</span>
+            <span class="font-semibold">@Model.Totalamount ₴</span>
+            <span class="text-muted-foreground">Кількість</span>
+            <span>@Model.Quantity шт.</span>
+            <span class="text-muted-foreground">Статус</span>
+            <span class="inline-flex">
+                <span class="rounded-full border px-2 py-1 text-xs font-medium @statusClass">
+                    @Model.Status
+                </span>
+            </span>
         </div>
     </div>
 
     <div>
-        <h2 class="text-lg font-semibold mb-3">Навушники в замовленні</h2>
+        <h2 class="mb-3 text-lg font-semibold">Навушники в замовленні</h2>
         @if (Model.Headphones.Any())
         {
-            <div class="rounded-lg border bg-card overflow-hidden">
+            <div class="bg-card overflow-hidden rounded-lg border">
                 <table class="w-full text-sm">
-                    <thead class="border-b bg-muted/50">
+                    <thead class="bg-muted/50 border-b">
                         <tr>
                             <th class="px-4 py-3 text-left font-medium">Назва</th>
                             <th class="px-4 py-3 text-left font-medium">Ціна</th>
@@ -37,7 +59,7 @@
                             <tr class="hover:bg-muted/30">
                                 <td class="px-4 py-3 font-medium">@h.Name</td>
                                 <td class="px-4 py-3">@h.Price ₴</td>
-                                <td class="px-4 py-3 text-muted-foreground">@h.Framematerial</td>
+                                <td class="text-muted-foreground px-4 py-3">@h.Framematerial</td>
                             </tr>
                         }
                     </tbody>
@@ -46,13 +68,21 @@
         }
         else
         {
-
-            <p class="text-sm text-muted-foreground">Навушників немає</p>
+            <p class="text-muted-foreground text-sm">Навушників немає</p>
         }
     </div>
 
-    <a asp-action="Edit" asp-route-id="@Model.Id"
-           class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
-        Редагувати
-    </a>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id"
+               class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-accent">
+                Редагувати
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id"
+               class="border-destructive/50 text-destructive inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-destructive/10">
+                Видалити
+            </a>
+        </div>
+    }
 </div>

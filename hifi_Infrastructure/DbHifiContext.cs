@@ -16,7 +16,7 @@ public partial class DbHifiContext : DbContext
     {
     }
 
-    public virtual DbSet<Customer> Customers { get; set; }
+    //public virtual DbSet<Customer> Customers { get; set; }
 
     public virtual DbSet<Customorderoption> Customorderoptions { get; set; }
 
@@ -32,7 +32,7 @@ public partial class DbHifiContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Customer>(entity =>
+        /*modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("customer_pkey");
 
@@ -52,7 +52,7 @@ public partial class DbHifiContext : DbContext
             entity.Property(e => e.Phone)
                 .HasMaxLength(20)
                 .HasColumnName("phone");
-        });
+        });*/
 
         modelBuilder.Entity<Customorderoption>(entity =>
         {
@@ -144,15 +144,19 @@ public partial class DbHifiContext : DbContext
             entity.ToTable("orders");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Customerid).HasColumnName("customerid");
+            //entity.Property(e => e.Customerid).HasColumnName("customerid");
             entity.Property(e => e.Orderdate).HasColumnName("orderdate");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.Totalamount).HasColumnName("totalamount");
+            entity.Property(e => e.Status)
+                .HasColumnName("status")
+                .HasDefaultValue("Обробляється");
+            entity.Property(e => e.UserId).HasColumnName("userid");
 
-            entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.Customerid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("orders_customerid_fkey");
+            entity.HasOne<hifi_Infrastructure.Models.User>()
+                .WithMany(u => u.Orders)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             entity.HasMany(d => d.Headphones).WithMany(p => p.Orders)
                 .UsingEntity<Dictionary<string, object>>(

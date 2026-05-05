@@ -1,8 +1,53 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+@source "../../Views/**/*.cshtml";
+@source "../../Controllers/**/*.cs";
+
+@plugin "daisyui" {
+    themes: ["light"];
+}
+
 @layer base {
     :root {
         --radius: 0.5rem;
+        
+        --color-brand-bg: oklch(97% 0.003 240); 
+        --color-header-bg: oklch(20% 0.03 265); 
+        --color-header-border: oklch(30% 0.04 265); 
     }
 }
+
+
+/*@layer utilities {
+    
+    .status-processing {
+        background-color: oklch(97% 0.05 85);
+        color: oklch(40% 0.12 60);
+        border-color: oklch(85% 0.08 85);
+    }
+
+    .status-shipped {
+        background-color: oklch(95% 0.04 270);
+        color: oklch(35% 0.15 270);
+        border-color: oklch(80% 0.08 270);
+    }
+
+    .status-delivered {
+        background-color: oklch(95% 0.04 250);
+        color: oklch(35% 0.12 250);
+        border-color: oklch(80% 0.06 250);
+    }
+
+    .status-done {
+        background-color: oklch(95% 0.06 145);
+        color: oklch(35% 0.12 145);
+        border-color: oklch(80% 0.08 145);
+    }
+
+    .status-cancelled {
+        background-color: oklch(97% 0.04 20);
+        color: oklch(40% 0.15 20);
+        border-color: oklch(85% 0.07 20);
+    }
+}*/

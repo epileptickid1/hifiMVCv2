@@ -1,26 +1,34 @@
-﻿@model hifiDomain.Model.Order
+@model hifiDomain.Model.Order
 @{
     ViewData["Title"] = "Видалити замовлення";
 }
 
 <div class="max-w-md space-y-6">
     <h1 class="text-2xl font-bold text-destructive">Видалити замовлення?</h1>
+
     <div class="rounded-lg border border-destructive/30 bg-card p-6 text-sm">
         <div class="grid grid-cols-2 gap-2">
+            <span class="text-muted-foreground">ID</span><span class="font-medium">#@Model.Id</span>
             <span class="text-muted-foreground">Дата</span><span>@Model.Orderdate</span>
             <span class="text-muted-foreground">Сума</span><span class="font-semibold">@Model.Totalamount ₴</span>
-            <span class="text-muted-foreground">Кількість</span><span>@Model.Quantity</span>
-            <span class="text-muted-foreground">Покупець</span><span>@Model.Customer.Name</span>
+            <span class="text-muted-foreground">Кількість</span><span>@Model.Quantity шт.</span>
+            <span class="text-muted-foreground">Статус</span><span>@Model.Status</span>
         </div>
     </div>
-    <form asp-action="Delete" class="flex gap-3">
+
+    <p class="text-sm text-muted-foreground">
+        Це також видалить всі зв'язки з навушниками та кастомними опціями.
+    </p>
+
+    <form asp-action="Delete" method="post" class="flex gap-3">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
         <button type="submit"
-                class="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-red-700 transition-colors">
+                class="inline-flex items-center justify-center rounded-md bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90 transition-colors">
             Так, видалити
         </button>
         <a asp-action="Index"
-               class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
+           class="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent transition-colors">
             Скасувати
         </a>
     </form>

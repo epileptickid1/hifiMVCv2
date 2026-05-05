@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using hifi_Infrastructure;
+using hifiDomain.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using hifiDomain.Model;
-using hifi_Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace hifi_Infrastructure.Controllers
 {
@@ -20,6 +21,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // GET: Headphones
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Headphones 
@@ -46,6 +48,7 @@ namespace hifi_Infrastructure.Controllers
             return View(headphone);
         }
         // GET: Headphones/Create/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["Internalpartsbrands"] = new MultiSelectList(
@@ -54,6 +57,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // POST: Headphones/Create/5
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
@@ -90,6 +94,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // GET: Headphones/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -108,6 +113,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // POST: Headphones/Edit/5
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,
@@ -161,6 +167,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // GET: Headphones/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -179,6 +186,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // POST: Headphones/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

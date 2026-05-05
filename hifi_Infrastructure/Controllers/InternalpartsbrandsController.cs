@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using hifi_Infrastructure;
+using hifiDomain.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using hifiDomain.Model;
-using hifi_Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace hifi_Infrastructure.Controllers
 {
@@ -20,6 +21,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // GET: Internalpartsbrands
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Internalpartsbrands.ToListAsync());
@@ -44,6 +46,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // GET: Internalpartsbrands/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -52,6 +55,7 @@ namespace hifi_Infrastructure.Controllers
         // POST: Internalpartsbrands/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Description,Country,Id")] Internalpartsbrand internalpartsbrand)
@@ -66,6 +70,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // GET: Internalpartsbrands/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,6 +89,7 @@ namespace hifi_Infrastructure.Controllers
         // POST: Internalpartsbrands/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Name,Description,Country,Id")] Internalpartsbrand internalpartsbrand)
@@ -117,6 +123,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // GET: Internalpartsbrands/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,6 +142,7 @@ namespace hifi_Infrastructure.Controllers
         }
 
         // POST: Internalpartsbrands/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

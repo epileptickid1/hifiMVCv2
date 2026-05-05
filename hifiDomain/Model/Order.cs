@@ -11,12 +11,15 @@ public partial class Order : Entity
     public DateOnly? Orderdate { get; set; }
     [Display(Name = "Всього ")]
     public decimal? Totalamount { get; set; }
-    [Display(Name = "Покупець ")]
-    public int Customerid { get; set; }
+    /*[Display(Name = "Покупець ")]
+    public int Customerid { get; set; }*/
     [Display(Name = "Кількість ")]
     public int? Quantity { get; set; }
 
-    public virtual Customer Customer { get; set; } = null!;
+    [Display(Name = "Статус")]
+    public string Status { get; set; } = "Обробляється";
+
+    public string UserId { get; set; } = null!;
     
     public virtual ICollection<Customorderoption> Customorderoptions { get; set; } = new List<Customorderoption>();
     
