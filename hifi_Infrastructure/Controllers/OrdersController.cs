@@ -29,8 +29,8 @@ namespace hifi_Infrastructure.Controllers
         public async Task<IActionResult> Index()
         {
             var orders = await _context.Orders
-            .OrderByDescending(o => o.Id)
-            .ToListAsync();
+                .OrderByDescending(o => o.Id)
+                .ToListAsync();
 
             var userIds = orders.Select(o => o.UserId).Distinct().ToList();
             var users = await _userManager.Users
@@ -41,6 +41,7 @@ namespace hifi_Infrastructure.Controllers
             return View(orders);
         }
 
+        // GET: MyOrders
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> MyOrders()
         {
@@ -88,8 +89,10 @@ namespace hifi_Infrastructure.Controllers
 
         // GET: Orders/Create
         [Authorize(Roles = "Admin")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var users = await _userManager.Users.OrderBy(u => u.Name).ToListAsync();
+            ViewBag.UsersList = new SelectList(users, "Id", "Email");
             return View();
         }
 
@@ -112,7 +115,8 @@ namespace hifi_Infrastructure.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            
+            var users = await _userManager.Users.OrderBy(u => u.Name).ToListAsync();
+            ViewBag.UsersList = new SelectList(users, "Id", "Email", order.UserId);
             return View(order);
         }
 
@@ -130,6 +134,8 @@ namespace hifi_Infrastructure.Controllers
             {
                 return NotFound();
             }
+            var users = await _userManager.Users.OrderBy(u => u.Name).ToListAsync();
+            ViewBag.UsersList = new SelectList(users, "Id", "Email", order.UserId);
             return View(order);
         }
 
@@ -168,7 +174,8 @@ namespace hifi_Infrastructure.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            
+            var users = await _userManager.Users.OrderBy(u => u.Name).ToListAsync();
+            ViewBag.UsersList = new SelectList(users, "Id", "Email", order.UserId);
             return View(order);
         }
 
@@ -187,7 +194,8 @@ namespace hifi_Infrastructure.Controllers
             {
                 return NotFound();
             }
-
+            var user = await _userManager.FindByIdAsync(order.UserId);
+            ViewBag.UserName = user?.Name ?? order.UserId;
             return View(order);
         }
 
@@ -197,8 +205,7 @@ namespace hifi_Infrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            try
-            {
+            
                 var order = await _context.Orders
                     .Include(o => o.Headphones)
                     .Include(o => o.Customorderoptions)
@@ -214,13 +221,10 @@ namespace hifi_Infrastructure.Controllers
                     _context.Orders.Remove(order);
                     await _context.SaveChangesAsync();
                 }
+                TempData["Success"] = "Замовлення видалено.";
                 return RedirectToAction(nameof(Index));
-            }
-            catch (Exception)
-            {
-                TempData["Error"] = "Неможливо видалити замовлення.";
-                return RedirectToAction(nameof(Index));
-            }
+            
+            
         }
         private bool OrderExists(int id)
         {

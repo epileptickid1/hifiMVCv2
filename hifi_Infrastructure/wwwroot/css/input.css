@@ -5,7 +5,7 @@
 @source "../../Controllers/**/*.cs";
 
 @plugin "daisyui" {
-    themes: ["light"];
+    themes: ["dark"];
 }
 
 @layer base {

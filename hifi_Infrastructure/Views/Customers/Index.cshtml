@@ -1,0 +1,54 @@
+﻿@model IEnumerable<(hifi_Infrastructure.Models.User user, IList<string> roles)>
+@{
+    ViewData["Title"] = "Користувачі";
+}
+
+<div class="space-y-4">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold tracking-tight">Користувачі</h1>
+        <a asp-action="Create"
+            class="text-primary-foreground inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium shadow transition-colors hover:bg-primary/90">
+            + Додати
+        </a>
+    </div>
+
+    <div class="bg-card overflow-hidden rounded-lg border">
+        <table class="w-full text-sm">
+            <thead class="bg-muted/50 border-b">
+                <tr>
+                    <th class="px-4 py-3 text-left font-medium">Ім'я</th>
+                    <th class="px-4 py-3 text-left font-medium">Email</th>
+                    <th class="px-4 py-3 text-left font-medium">Роль</th>
+                    <th class="px-4 py-3"></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y">
+                @foreach (var (user, roles) in Model)
+                {
+                    <tr class="transition-colors hover:bg-muted/30">
+                        <td class="px-4 py-3 font-medium">@user.Name</td>
+                        <td class="text-muted-foreground px-4 py-3">@user.Email</td>
+                        <td class="px-4 py-3">
+                            @foreach (var role in roles)
+                            {
+                                <span class="rounded-full border px-2 py-0.5 text-xs font-medium @(role == "Admin" ? "bg-slate-800 text-white border-slate-700" : "bg-indigo-100 text-indigo-800 border-indigo-200")">
+                                    @role
+                                </span>
+                            }
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex justify-end gap-2">
+                                <a asp-action="Edit" asp-route-id="@user.Id"
+                                   class="rounded border px-2 py-1 text-xs transition-colors hover:bg-accent">Ред.</a>
+                                <a asp-action="Details" asp-route-id="@user.Id"
+                                   class="rounded border px-2 py-1 text-xs transition-colors hover:bg-accent">Деталі</a>
+                                <a asp-action="Delete" asp-route-id="@user.Id"
+                                   class="rounded border border-red-200 px-2 py-1 text-xs text-red-700 transition-colors hover:bg-red-50">Видалити</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

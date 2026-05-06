@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="min-h-screen bg-gray-900 font-sans antialiased">
+<body class="min-h-screen bg-base-200 font-sans antialiased">
 
-    <header class="sticky top-0 z-50 w-full border-b border-primary bg-primary backdrop-blur">
+    <header class="sticky top-0 z-50 w-full border-b border-slate-700 bg-slate-900">
         <div class="container mx-auto flex h-14 items-center justify-between px-4">
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1">
                 <a asp-controller="Home" asp-action="Index">
                     <img src="~/images/Вуха Індастріс.jpg"
                          class="h-10 w-10 rounded-md object-cover" />
@@ -20,28 +20,32 @@
                 <h1 class="text-3xl font-bold tracking-tight">
                     Вуха<span class="text-secondary">Індастріс</span>
                 </h1>
-                <nav class="ml-2 flex items-center gap-1 text-sm">
-
+                <nav class="ml-2 flex items-center gap-1 text-sm text-slate-200">
+                    
                     @if (User.IsInRole("Admin"))
                     {
                         <a asp-controller="Headphones" asp-action="Index"
-                               class="rounded-md px-3 py-2 transition-colors hover:text-accent-foreground hover:bg-accent">
+                           class="rounded-md px-3 py-2 transition-colors hover:bg-slate-700">
                             Навушники
                         </a>
                         <a asp-controller="Internalpartsbrands" asp-action="Index"
-                               class="rounded-md px-3 py-2 transition-colors hover:text-accent-foreground hover:bg-accent">
+                           class="rounded-md px-3 py-2 transition-colors hover:bg-slate-700">
                             Компоненти
                         </a>
                         <a asp-controller="Orders" asp-action="Index"
-                               class="rounded-md px-3 py-2 transition-colors hover:text-accent-foreground hover:bg-accent">
+                           class="rounded-md px-3 py-2 transition-colors hover:bg-slate-700">
                             Замовлення
+                        </a>
+                        <a asp-controller="Customers" asp-action="Index"
+                           class="rounded-md px-3 py-2 transition-colors hover:bg-slate-700">
+                            Користувачі
                         </a>
                     }
 
                     @if (User.IsInRole("Customer"))
                     {
                         <a asp-controller="Orders" asp-action="MyOrders"
-                               class="rounded-md px-3 py-2 transition-colors hover:text-accent-foreground hover:bg-accent">
+                           class="rounded-md px-3 py-2 transition-colors hover:bg-slate-700">
                             Мої замовлення
                         </a>
                     }
@@ -50,14 +54,14 @@
                 </nav>
             </div>
 
-            <div class="flex items-center gap-2 text-sm">
+            <div class="flex items-center gap-2 text-sm text-slate-200">
                 <a asp-controller="Cart" asp-action="Index"
-                       class="rounded-md px-3 py-2 font-medium transition-colors hover:text-accent-foreground hover:bg-accent">
+                       class="rounded-md px-3 py-2 font-medium transition-colors hover:bg-slate-700">
                     🛒
                 </a>
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <span class="text-muted-foreground hidden sm:block">
+                    <span class="hidden text-slate-400 sm:block">
                         @User.Identity.Name
                         @if (User.IsInRole("Admin"))
                         {
@@ -67,7 +71,7 @@
                     <form asp-controller="Account" asp-action="Logout" method="post" class="inline">
                         @Html.AntiForgeryToken()
                         <button type="submit"
-                                class="inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent">
+                                class="inline-flex items-center justify-center rounded-md border border-slate-600 px-3 py-1.5 text-sm font-medium transition-colors hover:bg-slate-700">
                             Вийти
                         </button>
                     </form>
@@ -75,11 +79,11 @@
                 else
                 {
                     <a asp-controller="Account" asp-action="Login"
-                           class="inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent">
+                       class="inline-flex items-center justify-center rounded-md border border-slate-600 px-3 py-1.5 text-sm font-medium transition-colors hover:bg-slate-700">
                         Увійти
                     </a>
                     <a asp-controller="Account" asp-action="Register"
-                           class="inline-flex items-center justify-center rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-slate-700">
+                       class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-500">
                         Реєстрація
                     </a>
                 }
@@ -91,7 +95,7 @@
     <main class="container mx-auto px-4 py-8">
         @if (TempData["Error"] != null)
         {
-            <div class="border-destructive/50 bg-destructive/10 text-destructive mb-4 rounded-lg border px-4 py-3 text-sm">
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 @TempData["Error"]
             </div>
         }
@@ -104,10 +108,10 @@
         @RenderBody()
     </main>
 
-    <footer class="text-muted-foreground mt-auto border-t border-slate-900 bg-neutral py-4 text-center text-sm">
+    <footer class="mt-auto border-t border-slate-700 bg-slate-900 py-4 text-center text-sm text-slate-400">
         &copy; 2039 — вухаіндастріс&#64;tuta.com &nbsp;|&nbsp;
         <a asp-controller="Home" asp-action="Privacy"
-           class="underline underline-offset-4 hover:text-primary">Privacy</a>
+           class="underline underline-offset-4 hover:text-slate-200">Privacy</a>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

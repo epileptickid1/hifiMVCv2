@@ -1,4 +1,4 @@
-﻿/*using hifi_Infrastructure.Models;
+﻿using hifi_Infrastructure.Models;
 using hifi_Infrastructure.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +24,6 @@ namespace hifi_Infrastructure.Controllers
         {
             var users = await _userManager.Users.OrderByDescending(u => u.Name).ToListAsync();
 
-            // Для кожного юзера отримуємо його ролі
             var usersWithRoles = new List<(User user, IList<string> roles)>();
             foreach (var user in users)
             {
@@ -125,12 +124,10 @@ namespace hifi_Infrastructure.Controllers
                 return View(model);
             }
 
-            // Оновлюємо роль
             var currentRoles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, currentRoles);
             await _userManager.AddToRoleAsync(user, model.Role);
 
-            // Якщо змінили пароль
             if (!string.IsNullOrEmpty(model.NewPassword))
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -165,26 +162,33 @@ namespace hifi_Infrastructure.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null) return NotFound();
-
-            // Не дозволяємо видалити самого себе
-            var currentUserId = _userManager.GetUserId(User);
-            if (user.Id == currentUserId)
+            try
             {
-                TempData["Error"] = "Не можна видалити власний акаунт.";
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null) return NotFound();
+
+                var currentUserId = _userManager.GetUserId(User);
+                if (user.Id == currentUserId)
+                {
+                    TempData["Error"] = "Не можна видалити власний акаунт.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var result = await _userManager.DeleteAsync(user);
+                if (!result.Succeeded)
+                {
+                    TempData["Error"] = "Помилка при видаленні користувача.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                TempData["Success"] = "Користувача видалено.";
                 return RedirectToAction(nameof(Index));
             }
-
-            var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
+            catch (Exception)
             {
-                TempData["Error"] = "Помилка при видаленні користувача.";
+                TempData["Error"] = "Неможливо видалити покупця існує замовлення пов'язане з ними.";
                 return RedirectToAction(nameof(Index));
             }
-
-            TempData["Success"] = "Користувача видалено.";
-            return RedirectToAction(nameof(Index));
         }
     }
-}*/
+}

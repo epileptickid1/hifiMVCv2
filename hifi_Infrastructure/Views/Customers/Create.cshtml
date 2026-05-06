@@ -1,0 +1,64 @@
+@model hifi_Infrastructure.ViewModel.CreateUserViewModel
+@{
+    ViewData["Title"] = "Новий користувач";
+}
+
+<div class="max-w-md space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold">Новий користувач</h1>
+        <a asp-action="Index" class="text-sm text-muted-foreground hover:text-foreground">← Назад</a>
+    </div>
+
+    <div class="rounded-lg border bg-card p-6">
+        <form asp-action="Create" method="post" class="space-y-4">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-red-700 text-sm rounded-md border border-red-200 bg-red-50 px-3 py-2"></div>
+
+            <div class="space-y-1">
+                <label asp-for="Name" class="text-sm font-medium"></label>
+                <input asp-for="Name" placeholder="Іван Іваненко"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="Name" class="text-xs text-red-700"></span>
+            </div>
+
+            <div class="space-y-1">
+                <label asp-for="Email" class="text-sm font-medium"></label>
+                <input asp-for="Email" type="email" placeholder="user@email.com"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="Email" class="text-xs text-red-700"></span>
+            </div>
+
+            <div class="space-y-1">
+                <label asp-for="Password" class="text-sm font-medium"></label>
+                <input asp-for="Password" type="password" placeholder="Мін. 6 символів"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="Password" class="text-xs text-red-700"></span>
+            </div>
+
+            <div class="space-y-1">
+                <label asp-for="PasswordConfirm" class="text-sm font-medium"></label>
+                <input asp-for="PasswordConfirm" type="password" placeholder="Повторіть пароль"
+                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <span asp-validation-for="PasswordConfirm" class="text-xs text-red-700"></span>
+            </div>
+
+            <div class="space-y-1">
+                <label asp-for="Role" class="text-sm font-medium"></label>
+                <select asp-for="Role"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring">
+                    <option value="Customer">Customer</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+
+            <button type="submit"
+                    class="w-full inline-flex justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 transition-colors">
+                Створити
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

@@ -1,4 +1,4 @@
-@model IEnumerable<hifiDomain.Model.Order>
+﻿@model IEnumerable<hifiDomain.Model.Order>
 @{
     ViewData["Title"] = "Всі замовлення";
     var users = ViewBag.Users as Dictionary<string, string> ?? new Dictionary<string, string>();
@@ -7,18 +7,22 @@
 <div class="space-y-4">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-bold tracking-tight">Всі замовлення</h1>
+        <a asp-action="Create"
+               class="text-primary-foreground inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium shadow transition-colors hover:bg-primary/90">
+            + Додати
+        </a>
     </div>
 
     @if (TempData["Error"] != null)
     {
-        <div class="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive text-sm">
+        <div class="border-destructive/50 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
             @TempData["Error"]
         </div>
     }
 
-    <div class="rounded-lg border bg-card overflow-hidden">
+    <div class="bg-card overflow-hidden rounded-lg border">
         <table class="w-full text-sm">
-            <thead class="border-b bg-muted/50">
+            <thead class="bg-muted/50 border-b">
                 <tr>
                     <th class="px-4 py-3 text-left font-medium">ID</th>
                     <th class="px-4 py-3 text-left font-medium">Дата</th>
@@ -41,8 +45,8 @@
                         _ => "bg-yellow-100 text-yellow-800 border-yellow-200"
                     };
 
-                    <tr class="hover:bg-muted/30 transition-colors">
-                        <td class="px-4 py-3 text-muted-foreground">@item.Id</td>
+                    <tr class="transition-colors hover:bg-muted/30">
+                        <td class="text-muted-foreground px-4 py-3">@item.Id</td>
                         <td class="px-4 py-3">@item.Orderdate</td>
                         <td class="px-4 py-3 font-medium">@userName</td>
                         <td class="px-4 py-3">@item.Quantity</td>
@@ -52,24 +56,26 @@
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@item.Id" />
                                 <select name="status"
-                                        class="text-xs rounded border border-input px-2 py-1 focus:outline-none focus:ring-1 focus:ring-ring bg-neutral">
+                                        class="border-input rounded border bg-neutral px-2 py-1 text-xs focus:ring-ring focus:ring-1 focus:outline-none">
                                     <option value="Обробляється" selected="@(item.Status == "Обробляється")">Обробляється</option>
                                     <option value="Відправлено" selected="@(item.Status == "Відправлено")">Відправлено</option>
                                     <option value="Виконано" selected="@(item.Status == "Виконано")">Виконано</option>
                                     <option value="Скасовано" selected="@(item.Status == "Скасовано")">Скасовано</option>
                                 </select>
                                 <button type="submit"
-                                        class="text-xs px-2 py-1 rounded border hover:bg-accent transition-colors">
+                                        class="rounded border px-2 py-1 text-xs transition-colors hover:bg-accent">
                                     submit
                                 </button>
                             </form>
                         </td>
                         <td class="px-4 py-3">
-                            <div class="flex gap-2 justify-end">
+                            <div class="flex justify-end gap-2">
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="rounded border px-2 py-1 text-xs transition-colors hover:bg-accent">Ред.</a>
                                 <a asp-action="Details" asp-route-id="@item.Id"
-                                   class="text-xs px-2 py-1 rounded border hover:bg-accent transition-colors">Деталі</a>
+                                   class="rounded border px-2 py-1 text-xs transition-colors hover:bg-accent">Деталі</a>
                                 <a asp-action="Delete" asp-route-id="@item.Id"
-                                   class="text-xs px-2 py-1 rounded border border-destructive/50 text-destructive hover:bg-destructive/10 transition-colors">Видалити</a>
+                                   class="border-destructive/50 text-destructive rounded border px-2 py-1 text-xs transition-colors hover:bg-destructive/10">Видалити</a>
                             </div>
                         </td>
                     </tr>

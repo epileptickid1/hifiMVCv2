@@ -28,4 +28,8 @@
     <ProjectReference Include="..\hifiDomain\hifiDomain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Customers\" />
+  </ItemGroup>
+
 </Project>

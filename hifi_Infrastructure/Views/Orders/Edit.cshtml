@@ -1,62 +1,58 @@
-@model hifiDomain.Model.Order
+﻿@model hifiDomain.Model.Order
 @{
     ViewData["Title"] = "Редагувати замовлення";
-}
-
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="bg-destructive">
-        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <p>@error.ErrorMessage</p>
-        }
-    </div>
 }
 
 <div class="max-w-md space-y-6">
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-bold">Редагувати замовлення</h1>
-        <a asp-action="Index" class="text-sm text-muted-foreground hover:text-foreground">← Назад</a>
+        <a asp-action="Index" class="text-muted-foreground text-sm hover:text-foreground">← Назад</a>
     </div>
-    <div class="rounded-lg border bg-card p-6">
+    <div class="bg-card rounded-lg border p-6">
         <form asp-action="Edit" method="post" class="space-y-4">
             @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="text-destructive text-sm"></div>
             <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"></div>
 
             <div class="space-y-1">
-                <label asp-for="Orderdate" class="text-sm font-medium"></label>
+                <label asp-for="Orderdate" class="text-sm font-medium">Дата замовлення</label>
                 <input asp-for="Orderdate" type="date"
-                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                       class="border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm focus:ring-ring focus:ring-1 focus:outline-none" />
             </div>
+
             <div class="space-y-1">
-                <label asp-for="Totalamount" class="text-sm font-medium"></label>
-                <input asp-for="Totalamount"
-                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <label asp-for="Totalamount" class="text-sm font-medium">Сума, ₴</label>
+                <input asp-for="Totalamount" type="number" step="0.01"
+                       class="border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm focus:ring-ring focus:ring-1 focus:outline-none" />
             </div>
+
             <div class="space-y-1">
-                <label asp-for="Quantity" class="text-sm font-medium"></label>
-                <input asp-for="Quantity"
-                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <label asp-for="Quantity" class="text-sm font-medium">Кількість</label>
+                <input asp-for="Quantity" type="number"
+                       class="border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm focus:ring-ring focus:ring-1 focus:outline-none" />
             </div>
+
             <div class="space-y-1">
-                <label asp-for="Status" class="text-sm font-medium"></label>
+                <label asp-for="Status" class="text-sm font-medium">Статус</label>
                 <select asp-for="Status"
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring">
+                        class="border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm focus:ring-ring focus:ring-1 focus:outline-none">
                     <option value="Обробляється">Обробляється</option>
                     <option value="Відправлено">Відправлено</option>
                     <option value="Виконано">Виконано</option>
                     <option value="Скасовано">Скасовано</option>
                 </select>
             </div>
+
             <div class="space-y-1">
-                <label asp-for="UserId" class="text-sm font-medium">ID користувача</label>
-                <input asp-for="UserId"
-                       class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <label asp-for="UserId" class="text-sm font-medium">Покупець</label>
+                <select asp-for="UserId" asp-items="ViewBag.UsersList"
+                        class="border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm focus:ring-ring focus:ring-1 focus:outline-none">
+                    <option value="">— Оберіть користувача —</option>
+                </select>
             </div>
 
             <button type="submit"
-                    class="w-full inline-flex justify-center rounded-md bg-blue-800 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors">
+                    class="inline-flex w-full justify-center rounded-md bg-blue-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600">
                 Зберегти
             </button>
         </form>
@@ -64,5 +60,7 @@
 </div>
 
 @section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
