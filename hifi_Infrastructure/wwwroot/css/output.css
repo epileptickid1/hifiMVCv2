@@ -4540,6 +4540,9 @@
   .h-14 {
     height: calc(var(--spacing) * 14);
   }
+  .h-20 {
+    height: calc(var(--spacing) * 20);
+  }
   .h-60 {
     height: calc(var(--spacing) * 60);
   }
@@ -4558,8 +4561,17 @@
   .w-10 {
     width: calc(var(--spacing) * 10);
   }
+  .w-13 {
+    width: calc(var(--spacing) * 13);
+  }
+  .w-15 {
+    width: calc(var(--spacing) * 15);
+  }
   .w-16 {
     width: calc(var(--spacing) * 16);
+  }
+  .w-20 {
+    width: calc(var(--spacing) * 20);
   }
   .w-full {
     width: 100%;
